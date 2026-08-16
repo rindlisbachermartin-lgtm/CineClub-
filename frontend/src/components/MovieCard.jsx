@@ -1,4 +1,7 @@
 function MovieCard({ movie, onSelect }) {
+  // Verificación de seguridad por si no llega la película
+  if (!movie) return null;
+
   const posterUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     : 'https://via.placeholder.com/500x750?text=Sin+Poster';
@@ -16,7 +19,7 @@ function MovieCard({ movie, onSelect }) {
         backgroundColor: '#fff',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
       }}
     >
       <img
@@ -24,9 +27,26 @@ function MovieCard({ movie, onSelect }) {
         alt={movie.title}
         style={{ width: '100%', height: '300px', objectFit: 'cover' }}
       />
-      <div style={{ padding: '12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#333' }}>{movie.title}</h3>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#666' }}>
+      <div
+        style={{
+          padding: '12px',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+      >
+        <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#333' }}>
+          {movie.title}
+        </h3>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontSize: '14px',
+            color: '#666',
+          }}
+        >
           <span>📅 {year}</span>
           <span>⭐ {movie.avgScore ? `${movie.avgScore} / 5` : 'Sin reseñas'}</span>
         </div>

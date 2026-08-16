@@ -1,38 +1,28 @@
-function MovieCard({ movie, onSelect }) {
-  const posterUrl = movie.poster_path
-    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-    : 'https://via.placeholder.com/500x750?text=Sin+Poster';
+import MovieCard from './MovieCard';
 
-  const year = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
+function MovieGrid({ movies, onSelectMovie }) {
+  if (!movies || movies.length === 0) {
+    return (
+      <p style={{ textAlign: 'center', color: '#666', marginTop: '30px' }}>
+        No hay películas para mostrar. Escribí un título arriba y presioná "Buscar".
+      </p>
+    );
+  }
 
   return (
     <div
-      onClick={() => onSelect(movie.id)}
       style={{
-        border: '1px solid #ddd',
-        borderRadius: '8px',
-        overflow: 'hidden',
-        cursor: 'pointer',
-        backgroundColor: '#fff',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        display: 'flex',
-        flexDirection: 'column'
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+        gap: '20px',
+        marginTop: '20px',
       }}
     >
-      <img
-        src={posterUrl}
-        alt={movie.title}
-        style={{ width: '100%', height: '300px', objectFit: 'cover' }}
-      />
-      <div style={{ padding: '12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#333' }}>{movie.title}</h3>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#666' }}>
-          <span>📅 {year}</span>
-          <span>⭐ {movie.avgScore ? `${movie.avgScore} / 5` : 'Sin reseñas'}</span>
-        </div>
-      </div>
+      {movies.map((movie) => (
+        <MovieCard key={movie.id} movie={movie} onSelect={onSelectMovie} />
+      ))}
     </div>
   );
 }
 
-export default MovieCard;
+export default MovieGrid;

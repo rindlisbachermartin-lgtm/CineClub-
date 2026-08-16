@@ -8,13 +8,13 @@ const PORT = process.env.PORT || 3001;
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
-// Array en memoria para guardar las reseñas
+// Array en memoria para guardar las reseñas de los usuarios
 let reviews = [];
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(morgan('dev')); // Muestra en la terminal cada petición que entra
+app.use(morgan('dev'));
 
 // Ruta de prueba
 app.get('/api/health', (req, res) => {
@@ -22,10 +22,8 @@ app.get('/api/health', (req, res) => {
 });
 
 // ==========================================
-// RUTAS DE PELÍCULAS (PROXY HACIA TMDB)
+// 1. BUSCADOR DE PELÍCULAS (GET /api/movies/search?q=...)
 // ==========================================
-
-// 1. Buscar películas: GET /api/movies/search?q=:query
 app.get('/api/movies/search', async (req, res) => {
   const query = req.query.q;
 
@@ -43,8 +41,7 @@ app.get('/api/movies/search', async (req, res) => {
 
     const data = await response.json();
 
-    // Mapeamos los resultados e incluimos el avgScore si la película tiene reseñas
-    const resultsWithAvgScore = data.results.map((movie) => {
+    const resultsWithAvgScore = (data.results || []).map((movie) => {
       const movieReviews = reviews.filter((r) => r.movieId === movie.id.toString());
       const avgScore = movieReviews.length > 0
         ? movieReviews.reduce((acc, curr) => acc + curr.score, 0) / movieReviews.length
@@ -67,7 +64,9 @@ app.get('/api/movies/search', async (req, res) => {
   }
 });
 
-// 2. Detalle de película: GET /api/movies/:tmdbId
+// ==========================================
+// 2. DETALLE DE PELÍCULA (GET /api/movies/:tmdbId)
+// ==========================================
 app.get('/api/movies/:tmdbId', async (req, res) => {
   const { tmdbId } = req.params;
 
@@ -85,10 +84,10 @@ app.get('/api/movies/:tmdbId', async (req, res) => {
 
     const movie = await response.json();
 
-    // Filtrar las reseñas que pertenecen a esta película
+    // Filtramos las reseñas de esta película
     const movieReviews = reviews.filter((r) => r.movieId === tmdbId.toString());
 
-    // Calcular el promedio de puntaje
+    // Calculamos el promedio de puntaje
     const avgScore = movieReviews.length > 0
       ? movieReviews.reduce((acc, curr) => acc + curr.score, 0) / movieReviews.length
       : null;
@@ -99,31 +98,27 @@ app.get('/api/movies/:tmdbId', async (req, res) => {
       overview: movie.overview,
       release_date: movie.release_date,
       poster_path: movie.poster_path,
-      genres: movie.genres,
+      genres: movie.genres || [],
       reviews: movieReviews,
       avgScore: avgScore ? Number(avgScore.toFixed(1)) : null,
     });
   } catch (error) {
-    console.error('Error en detalle de película:', error);
+    console.error('Error en detalle:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
 // ==========================================
-// RUTAS DE RESEÑAS (GUARDADAS EN MEMORIA)
+// 3. CREAR RESEÑA (POST /api/movies/:tmdbId/reviews)
 // ==========================================
-
-// 3. Crear una reseña: POST /api/movies/:tmdbId/reviews
 app.post('/api/movies/:tmdbId/reviews', (req, res) => {
   const { tmdbId } = req.params;
   const { author, score, comment } = req.body;
 
-  // Validación: campos obligatorios
   if (!author || score === undefined || !comment) {
     return res.status(400).json({ error: 'Todos los campos son obligatorios: author, score y comment' });
   }
 
-  // Validación: score numérico entre 1 y 5
   const numericScore = Number(score);
   if (isNaN(numericScore) || numericScore < 1 || numericScore > 5) {
     return res.status(400).json({ error: 'El puntaje (score) debe ser un número entre 1 y 5' });
@@ -143,7 +138,9 @@ app.post('/api/movies/:tmdbId/reviews', (req, res) => {
   res.status(201).json(newReview);
 });
 
-// 4. Eliminar una reseña: DELETE /api/reviews/:reviewId
+// ==========================================
+// 4. ELIMINAR RESEÑA (DELETE /api/reviews/:reviewId)
+// ==========================================
 app.delete('/api/reviews/:reviewId', (req, res) => {
   const { reviewId } = req.params;
 
@@ -158,7 +155,7 @@ app.delete('/api/reviews/:reviewId', (req, res) => {
   res.json({ message: 'Reseña eliminada con éxito', review: deletedReview });
 });
 
-// Iniciar servidor
+// Iniciar servidor y mantenerlo escuchando
 app.listen(PORT, () => {
   console.log(`Servidor CineClub corriendo en http://localhost:${PORT}`);
 });
