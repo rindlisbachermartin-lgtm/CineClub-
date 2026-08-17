@@ -11,44 +11,22 @@ function MovieCard({ movie, onSelect }) {
   return (
     <div
       onClick={() => onSelect(movie.id)}
-      style={{
-        border: '1px solid #ddd',
-        borderRadius: '8px',
-        overflow: 'hidden',
-        cursor: 'pointer',
-        backgroundColor: '#fff',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
+      className="movie-card"
     >
       <img
         src={posterUrl}
         alt={movie.title}
-        style={{ width: '100%', height: '300px', objectFit: 'cover' }}
+        className="movie-card-poster"
       />
-      <div
-        style={{
-          padding: '12px',
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        }}
-      >
-        <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#333' }}>
+      <div className="movie-card-body">
+        <h3 className="movie-card-title">
           {movie.title}
         </h3>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: '14px',
-            color: '#666',
-          }}
-        >
+        <div className="movie-card-meta">
           <span>📅 {year}</span>
-          <span>⭐ {movie.avgScore ? `${movie.avgScore} / 5` : 'Sin reseñas'}</span>
+          <span className="movie-card-score">
+            ⭐ {movie.avgScore ? `${movie.avgScore} / 5` : 'Sin reseñas'}
+          </span>
         </div>
       </div>
     </div>

@@ -29,28 +29,28 @@ function ReviewForm({ onAddReview }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginTop: '20px', padding: '16px', border: '1px solid #ddd', borderRadius: '6px', backgroundColor: '#fff' }}>
-      <h3 style={{ marginTop: 0 }}>Dejar una reseña</h3>
-      
-      {error && <p style={{ color: '#ff4d4f', fontSize: '14px' }}>{error}</p>}
+    <form onSubmit={handleSubmit} className="review-form">
+      <h3 className="review-form-title">Dejar una reseña</h3>
 
-      <div style={{ marginBottom: '12px' }}>
-        <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Tu Nombre:</label>
+      {error && <p className="review-form-error">{error}</p>}
+
+      <div className="form-field">
+        <label className="form-label">Tu Nombre:</label>
         <input
           type="text"
           value={author}
           onChange={(e) => setAuthor(e.target.value)}
           placeholder="Ej: Martín"
-          style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+          className="form-input"
         />
       </div>
 
-      <div style={{ marginBottom: '12px' }}>
-        <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Puntaje (1 al 5):</label>
+      <div className="form-field">
+        <label className="form-label">Puntaje (1 al 5):</label>
         <select
           value={score}
           onChange={(e) => setScore(e.target.value)}
-          style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+          className="form-select"
         >
           <option value="5">5 - Excelente</option>
           <option value="4">4 - Muy buena</option>
@@ -60,30 +60,18 @@ function ReviewForm({ onAddReview }) {
         </select>
       </div>
 
-      <div style={{ marginBottom: '12px' }}>
-        <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Comentario:</label>
+      <div className="form-field">
+        <label className="form-label">Comentario:</label>
         <textarea
           rows="3"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="Escribí tu opinión sobre la película..."
-          style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+          className="form-textarea"
         />
       </div>
 
-      <button
-        type="submit"
-        style={{
-          padding: '10px 16px',
-          backgroundColor: '#28a745',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '14px',
-          fontWeight: 'bold'
-        }}
-      >
+      <button type="submit" className="submit-btn">
         Publicar Reseña
       </button>
     </form>

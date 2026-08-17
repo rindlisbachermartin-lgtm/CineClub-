@@ -10,50 +10,51 @@ function MovieDetail({ movie, onBack, onAddReview, onDeleteReview }) {
     <div>
       <button
         onClick={onBack}
-        style={{
-          marginBottom: '20px',
-          padding: '8px 16px',
-          backgroundColor: '#6c757d',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
+        className="back-btn"
       >
         ← Volver a la búsqueda
       </button>
 
-      <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap', marginBottom: '30px' }}>
+      <div className="detail-layout">
         <img
           src={posterUrl}
           alt={movie.title}
-          style={{ width: '260px', borderRadius: '8px', objectFit: 'cover' }}
+          className="detail-poster"
         />
 
-        <div style={{ flex: 1, minWidth: '280px' }}>
-          <h1 style={{ margin: '0 0 10px 0' }}>{movie.title}</h1>
-          
-          <p style={{ color: '#666', fontSize: '15px', marginBottom: '15px' }}>
-            📅 <strong>Estreno:</strong> {movie.release_date || 'Desconocida'} | ⭐ <strong>Promedio CineClub:</strong> {movie.avgScore ? `${movie.avgScore} / 5` : 'Sin reseñas'}
-          </p>
+        <div className="detail-info">
+          <h1 className="detail-title">{movie.title}</h1>
+
+          <div className="detail-meta">
+            <span className="detail-meta-item">
+              📅 <strong>Estreno:</strong>&nbsp;{movie.release_date || 'Desconocida'}
+            </span>
+            <span className="detail-meta-item">
+              ⭐ <strong>Promedio CineClub:</strong>&nbsp;
+              <span className="detail-score-badge">
+                {movie.avgScore ? `${movie.avgScore} / 5` : 'Sin reseñas'}
+              </span>
+            </span>
+          </div>
 
           {movie.genres && movie.genres.length > 0 && (
-            <div style={{ marginBottom: '15px' }}>
-              <strong>Géneros: </strong>
-              {movie.genres.map((g) => g.name).join(', ')}
+            <div className="detail-genres">
+              {movie.genres.map((g) => (
+                <span key={g.id} className="genre-tag">{g.name}</span>
+              ))}
             </div>
           )}
 
-          <h3>Sinopsis</h3>
-          <p style={{ lineHeight: '1.6', color: '#444' }}>
+          <p className="detail-synopsis-heading">Sinopsis</p>
+          <p className="detail-synopsis">
             {movie.overview || 'No hay sinopsis disponible en español para esta película.'}
           </p>
         </div>
       </div>
 
-      <hr style={{ borderColor: '#eee', margin: '30px 0' }} />
+      <hr className="detail-divider" />
 
-      <h2>Reseñas de la Comunidad</h2>
+      <h2 className="reviews-heading">Reseñas de la Comunidad</h2>
       <ReviewList reviews={movie.reviews} onDeleteReview={onDeleteReview} />
       <ReviewForm onAddReview={onAddReview} />
     </div>

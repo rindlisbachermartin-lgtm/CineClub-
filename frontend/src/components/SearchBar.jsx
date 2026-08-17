@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function SearchBar({ onSearch }) {
+function SearchBar({ onSearch, heroMode = false }) {
   const [query, setQuery] = useState('');
 
   const handleSubmit = (e) => {
@@ -9,18 +9,33 @@ function SearchBar({ onSearch }) {
     onSearch(query.trim());
   };
 
+  if (heroMode) {
+    return (
+      <form onSubmit={handleSubmit} id="ev-search-form">
+        <input
+          type="text"
+          placeholder="Buscar una película (ej: Inception)..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="ev-search-input"
+        />
+        <input type="submit" value="Buscar" />
+      </form>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+    <form onSubmit={handleSubmit} className="search-form">
       <input
         type="text"
         placeholder="Buscar una película (ej: Inception)..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        style={{ flex: 1, padding: '10px', fontSize: '16px', borderRadius: '4px', border: '1px solid #ccc' }}
+        className="search-input"
       />
-      <button 
-        type="submit" 
-        style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', backgroundColor: '#e50914', color: '#fff', border: 'none', borderRadius: '4px' }}
+      <button
+        type="submit"
+        className="search-btn"
       >
         Buscar
       </button>

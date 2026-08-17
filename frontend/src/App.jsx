@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './App.css';
 import SearchBar from './components/SearchBar';
 import MovieGrid from './components/MovieGrid';
 import MovieDetail from './components/MovieDetail';
@@ -17,10 +18,14 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Si se realizó al menos una búsqueda
+  const [hasSearched, setHasSearched] = useState(false);
+
   // 1. Función para buscar películas
   const handleSearch = async (query) => {
     setLoading(true);
     setError(null);
+    setHasSearched(true);
     try {
       const response = await fetch(`${API_URL}/api/movies/search?q=${encodeURIComponent(query)}`);
       if (!response.ok) {
@@ -99,61 +104,93 @@ function App() {
     }
   };
 
-  // 5. Volver a la vista de búsqueda
+  // 5. Volver a la vista de búsqueda (desde el detalle)
   const handleBackToSearch = () => {
     setSelectedMovie(null);
     setError(null);
   };
 
+  // 6. Volver a la pantalla principal de inicio
+  const handleGoHome = () => {
+    setSelectedMovie(null);
+    setHasSearched(false);
+    setMovies([]);
+    setError(null);
+  };
+
+  // ¿Estamos en la pantalla de inicio (sin resultados ni película)?
+  const isHero = !selectedMovie && !hasSearched;
+
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '20px', fontFamily: 'system-ui, sans-serif' }}>
-      <header style={{ borderBottom: '2px solid #e50914', paddingBottom: '10px', marginBottom: '25px' }}>
-        <h1 
-          onClick={handleBackToSearch} 
-          style={{ cursor: 'pointer', margin: 0, color: '#e50914', display: 'inline-block' }}
-        >
-          🎬 CineClub
-        </h1>
-      </header>
+    <div className={`app-root${isHero ? ' is-hero' : ''}`}>
 
-      <main>
-        {/* Mensaje de error visible si algo falla */}
-        {error && (
-          <div style={{ padding: '12px', backgroundColor: '#ffebee', color: '#c62828', borderRadius: '6px', marginBottom: '20px' }}>
-            ⚠️ {error}
-          </div>
-        )}
+      {/* ── HERO (estado inicial) ── */}
+      {isHero && (
+        <div className="ev-hero">
+          <header id="ev-header">
+            <h1> CineClub</h1>
+            <p>Buscá tu película favorita y dejá tu reseña.<br />
+            Tu comunidad de cine te espera.</p>
+          </header>
+          <SearchBar onSearch={handleSearch} heroMode />
+        </div>
+      )}
 
-        {/* Estado de carga visible */}
-        {loading && (
-          <div style={{ textAlign: 'center', padding: '30px', fontSize: '18px', color: '#666' }}>
-            ⏳ Cargando...
-          </div>
-        )}
+      {/* ── VISTA NORMAL (con resultados o detalle) ── */}
+      {!isHero && (
+        <div className="app-wrapper">
+          <header className="app-header">
+            <h1
+              className="app-logo"
+              onClick={handleGoHome}
+            >
+              <span className="logo-icon"></span> CineClub
+            </h1>
+            <span className="app-tagline">Tu comunidad de cine</span>
+          </header>
 
-        {/* Render condicional de vistas usando useState */}
-        {!loading && (
-          <>
-            {!selectedMovie ? (
-              // Vista 1: Buscador y Grilla de películas
-              <div>
-                <SearchBar onSearch={handleSearch} />
-                <MovieGrid movies={movies} onSelectMovie={handleSelectMovie} />
+          <main>
+            {/* Mensaje de error visible si algo falla */}
+            {error && (
+              <div className="error-banner">
+                ⚠️ {error}
               </div>
-            ) : (
-              // Vista 2: Detalle de película y Reseñas
-              <MovieDetail
-                movie={selectedMovie}
-                onBack={handleBackToSearch}
-                onAddReview={handleAddReview}
-                onDeleteReview={handleDeleteReview}
-              />
             )}
-          </>
-        )}
-      </main>
+
+            {/* Estado de carga visible */}
+            {loading && (
+              <div className="loading-state">
+                Cargando...
+              </div>
+            )}
+
+            {/* Render condicional de vistas usando useState */}
+            {!loading && (
+              <>
+                {!selectedMovie ? (
+                  // Vista 1: Buscador y Grilla de películas
+                  <div>
+                    <SearchBar onSearch={handleSearch} />
+                    <MovieGrid movies={movies} onSelectMovie={handleSelectMovie} />
+                  </div>
+                ) : (
+                  // Vista 2: Detalle de película y Reseñas
+                  <MovieDetail
+                    movie={selectedMovie}
+                    onBack={handleBackToSearch}
+                    onAddReview={handleAddReview}
+                    onDeleteReview={handleDeleteReview}
+                  />
+                )}
+              </>
+            )}
+          </main>
+        </div>
+      )}
+
     </div>
   );
+
 }
 
 export default App;
