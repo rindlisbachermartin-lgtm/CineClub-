@@ -1,0 +1,127 @@
+/* ─── Contenedor del Carrusel Dual en el Hero ─── */
+.dual-carousel-container {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background: #0b0d13;
+  padding: 16px 0;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Viewport con efecto de degradado en los extremos */
+.dual-carousel-viewport {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+
+.carousel-row {
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+/* Pausar carrusel al pasar el mouse por encima */
+.dual-carousel-container:hover .carousel-track {
+  animation-play-state: paused;
+}
+
+.carousel-group {
+  display: flex;
+  gap: 14px;
+  padding: 0 7px;
+  flex-shrink: 0;
+}
+
+/* Animaciones CSS infinitas */
+.animate-scroll-left {
+  animation: scrollLeft 45s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scrollRight 45s linear infinite;
+}
+
+@keyframes scrollLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.333333%); }
+}
+
+@keyframes scrollRight {
+  0% { transform: translateX(-33.333333%); }
+  100% { transform: translateX(0); }
+}
+
+/* ─── Tarjeta del Carrusel ─── */
+.carousel-card {
+  position: relative;
+  width: 160px;
+  height: 235px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #151821;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carousel-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  border-color: #ffa723;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(255, 167, 35, 0.2);
+  z-index: 5;
+}
+
+.carousel-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.carousel-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 60%);
+  display: flex;
+  align-items: flex-end;
+  padding: 10px;
+  pointer-events: none;
+}
+
+.carousel-card-title {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .carousel-card {
+    width: 130px;
+    height: 190px;
+  }
+  .carousel-card-title {
+    font-size: 0.75rem;
+  }
+}

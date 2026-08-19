@@ -3,6 +3,7 @@ import './App.css';
 import SearchBar from './components/SearchBar';
 import MovieGrid from './components/MovieGrid';
 import MovieDetail from './components/MovieDetail';
+import DualImageCarousel from './components/DualImageCarousel';
 
 // Obtenemos la URL base de la API desde la variable de entorno de Vite
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
@@ -14,9 +15,18 @@ function App() {
   // Estado para la película seleccionada actualmente (null = Vista de Búsqueda)
   const [selectedMovie, setSelectedMovie] = useState(null);
   
-  // Estados para carga y errores
+  // Estados para carga, errores y notificaciones de éxito
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+
+  // Función para mostrar notificación temporal de éxito (3.5 segundos)
+  const showSuccess = (message) => {
+    setSuccessMessage(message);
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 3500);
+  };
 
   // Si se realizó al menos una búsqueda
   const [hasSearched, setHasSearched] = useState(false);
@@ -78,6 +88,7 @@ function App() {
 
       // Recargamos los detalles de la película para actualizar las reseñas y el avgScore
       await handleSelectMovie(selectedMovie.id);
+      showSuccess('Reseña publicada con éxito.');
     } catch (err) {
       console.error(err);
       setError(err.message || 'No se pudo publicar la reseña.');
@@ -98,6 +109,7 @@ function App() {
 
       // Recargamos los detalles de la película para actualizar la lista
       await handleSelectMovie(selectedMovie.id);
+      showSuccess('Reseña eliminada correctamente.');
     } catch (err) {
       console.error(err);
       setError('No se pudo eliminar la reseña.');
@@ -124,15 +136,35 @@ function App() {
   return (
     <div className={`app-root${isHero ? ' is-hero' : ''}`}>
 
+      {/* Notificación de éxito flotante */}
+      {successMessage && (
+        <div className="success-toast" role="status" aria-live="polite">
+          {successMessage}
+        </div>
+      )}
+
       {/* ── HERO (estado inicial) ── */}
       {isHero && (
-        <div className="ev-hero">
-          <header id="ev-header">
-            <h1> CineClub</h1>
-            <p>Buscá tu película favorita y dejá tu reseña.<br />
-            Tu comunidad de cine te espera.</p>
-          </header>
-          <SearchBar onSearch={handleSearch} heroMode />
+        <div className="ev-hero-wrapper">
+          <div className="ev-hero">
+            <header id="ev-header">
+              <h1>
+                <img
+                  src="https://static.vecteezy.com/system/resources/thumbnails/039/557/662/small/ai-generated-transparent-popcorn-pile-adding-texture-and-realism-to-graphic-compositions-free-png.png"
+                  alt="Popcorn"
+                  className="title-popcorn-icon"
+                />
+                CineClub
+              </h1>
+              <p>Buscá tu película favorita y dejá tu reseña.<br />
+              Tu comunidad de cine te espera.</p>
+            </header>
+            <SearchBar onSearch={handleSearch} heroMode />
+          </div>
+
+          <div className="hero-film-carousel">
+            <DualImageCarousel onSelectMovie={handleSelectMovie} />
+          </div>
         </div>
       )}
 
@@ -144,7 +176,12 @@ function App() {
               className="app-logo"
               onClick={handleGoHome}
             >
-              <span className="logo-icon"></span> CineClub
+              <img
+                src="https://static.vecteezy.com/system/resources/thumbnails/039/557/662/small/ai-generated-transparent-popcorn-pile-adding-texture-and-realism-to-graphic-compositions-free-png.png"
+                alt="Popcorn"
+                className="logo-popcorn-icon"
+              />
+              CineClub
             </h1>
             <span className="app-tagline">Tu comunidad de cine</span>
           </header>

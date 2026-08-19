@@ -1,4 +1,9 @@
+import { useState } from 'react';
+
 function MovieCard({ movie, onSelect }) {
+  // Estado local con useState para controlar el hover de la tarjeta
+  const [isHovered, setIsHovered] = useState(false);
+
   // Verificación de seguridad por si no llega la película
   if (!movie) return null;
 
@@ -11,13 +16,28 @@ function MovieCard({ movie, onSelect }) {
   return (
     <div
       onClick={() => onSelect(movie.id)}
-      className="movie-card"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`movie-card ${isHovered ? 'is-hovered' : ''}`}
     >
-      <img
-        src={posterUrl}
-        alt={movie.title}
-        className="movie-card-poster"
-      />
+      <div className="movie-card-poster-wrapper">
+        <img
+          src={posterUrl}
+          alt={movie.title}
+          className="movie-card-poster"
+        />
+
+        {/* Overlay con la descripción al hacer hover gestionado con useState */}
+        {isHovered && (
+          <div className="movie-card-hover-overlay">
+            <p className="movie-card-overview">
+              {movie.overview || 'Sin descripción disponible.'}
+            </p>
+            <span className="movie-card-hover-cta">Ver reseñas y detalles →</span>
+          </div>
+        )}
+      </div>
+
       <div className="movie-card-body">
         <h3 className="movie-card-title">
           {movie.title}
